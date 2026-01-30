@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
+import CopilotWidget from '@/components/CopilotWidget';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
@@ -44,6 +45,7 @@ export default function RootLayout({
                         },
                     }}
                 />
+                <CopilotWidget />
             </body>
         </html>
     );

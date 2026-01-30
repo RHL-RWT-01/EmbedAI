@@ -4,10 +4,10 @@ import apiClient from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import type { Tenant } from '@/lib/types';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Building2, CheckCircle2 } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 
 interface OnboardingForm {
     tenantName: string;
@@ -15,7 +15,7 @@ interface OnboardingForm {
 
 export default function OnboardingPage() {
     const router = useRouter();
-    const { setTenant } = useAuthStore();
+    const { tenant, checkAuth, isAuthenticated, isLoading: authLoading, setTenant } = useAuthStore();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -23,6 +23,29 @@ export default function OnboardingPage() {
         handleSubmit,
         formState: { errors },
     } = useForm<OnboardingForm>();
+
+    useEffect(() => {
+        const init = async () => {
+            const authenticated = await checkAuth();
+            if (!authenticated) {
+                router.push('/login');
+            } else {
+                const currentTenant = useAuthStore.getState().tenant;
+                if (currentTenant) {
+                    router.push('/dashboard');
+                }
+            }
+        };
+        init();
+    }, [checkAuth, router]);
+
+    if (authLoading || (isAuthenticated && tenant)) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+                <div className="animate-spin h-8 w-8 text-emerald-500" />
+            </div>
+        );
+    }
 
     const onSubmit = async (data: OnboardingForm) => {
         setIsLoading(true);

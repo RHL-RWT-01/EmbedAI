@@ -27,10 +27,14 @@ export interface Tenant {
 
 export interface TenantSettings {
     aiProvider: 'gemini' | 'openai';
-    defaultModel: string;
+    defaultModel?: string;
+    agentName?: string;
+    greeting?: string;
+    systemContext?: string;
     maxTokensPerMessage: number;
-    maxMessagesPerConversation: number;
+    maxMessagesPerConversation?: number;
     rateLimitPerMinute: number;
+    allowedDomains?: string[];
     widgetTheme: WidgetTheme;
 }
 

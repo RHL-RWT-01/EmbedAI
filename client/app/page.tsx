@@ -1,14 +1,32 @@
 'use client';
 
 import { useAuthStore } from '@/lib/store';
+import {
+    ArrowRight,
+    BarChart3,
+    Check,
+    ChevronRight,
+    Code2,
+    Cpu,
+    Github,
+    Globe,
+    Loader2,
+    Lock,
+    Play,
+    Rocket,
+    Sparkles,
+    Star,
+    TrendingUp,
+    Twitter,
+    Zap
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Loader2, MessageSquare, Zap, Shield, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function HomePage() {
     const router = useRouter();
-    const { isAuthenticated, checkAuth } = useAuthStore();
+    const { checkAuth } = useAuthStore();
     const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
@@ -24,39 +42,46 @@ export default function HomePage() {
 
     if (isChecking) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-950">
-                <div className="text-center">
-                    <Loader2 className="animate-spin h-12 w-12 text-emerald-500 mx-auto mb-4" />
-                    <p className="text-gray-400 text-lg">Loading...</p>
-                </div>
+            <div className="min-h-screen flex items-center justify-center bg-[#0A0A0B]">
+                <Loader2 className="animate-spin h-8 w-8 text-white" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-zinc-950">
+        <div className="min-h-screen bg-[#0A0A0B] text-white overflow-x-hidden">
+            {/* Subtle grid background */}
+            <div className="fixed inset-0 opacity-30 pointer-events-none">
+                <div className="absolute inset-0" style={{
+                    backgroundImage: `linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)`,
+                    backgroundSize: '64px 64px'
+                }} />
+            </div>
+
             {/* Navigation */}
-            <nav className="fixed top-0 w-full bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black bg-opacity-80 backdrop-blur-xl">
+                <div className="max-w-6xl mx-auto px-6">
                     <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg"></div>
-                            <span className="text-xl font-bold text-white">
-                                Embed
-                            </span>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <Link
-                                href="/login"
-                                className="text-gray-300 hover:text-white font-medium transition-colors"
-                            >
-                                Sign in
+                        <div className="flex items-center gap-8">
+                            <Link href="/" className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                                    <Sparkles className="w-4 h-4 text-black" />
+                                </div>
+                                <span className="text-lg font-semibold tracking-tight">Embed</span>
                             </Link>
-                            <Link
-                                href="/register"
-                                className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-emerald-500/50 transition-all font-medium"
-                            >
-                                Get Started
+                            <div className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
+                                <a href="#features" className="hover:text-white transition-colors">Features</a>
+                                <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
+                                <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+                                <a href="#" className="hover:text-white transition-colors">Docs</a>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Link href="/login" className="text-sm text-zinc-400 hover:text-white transition-colors px-4 py-2">
+                                Log in
+                            </Link>
+                            <Link href="/register" className="text-sm bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-zinc-200 transition-colors">
+                                Start free
                             </Link>
                         </div>
                     </div>
@@ -64,218 +89,477 @@ export default function HomePage() {
             </nav>
 
             {/* Hero Section */}
-            <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center max-w-4xl mx-auto">
-                        <div className="inline-block mb-4 px-4 py-2 bg-emerald-500/10 text-emerald-400 rounded-full text-sm font-medium border border-emerald-500/20">
-                            🚀 AI-Powered Chat Widget
-                        </div>
-                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-                            Embed AI Copilot
-                            <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
-                                {' '}Into Your Product
+            <section className="relative pt-32 pb-24 px-6">
+                {/* Gradient orbs */}
+                <div className="absolute top-40 left-1/4 w-96 h-96 bg-emerald-500 opacity-20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-60 right-1/4 w-80 h-80 bg-cyan-500 opacity-10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="max-w-6xl mx-auto relative">
+                    {/* Announcement banner */}
+                    <div className="flex justify-center mb-8">
+                        <a href="#" className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm hover:bg-white/10 transition-all">
+                            <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                New
                             </span>
-                        </h1>
-                        <p className="text-xl text-gray-400 mb-8 leading-relaxed">
-                            Transform your software with an intelligent chat widget that integrates your APIs.
-                            Give your users AI-powered assistance in minutes, not months.
-                        </p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <Link
-                                href="/register"
-                                className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-105 transition-all"
-                            >
-                                Start Free Trial
-                            </Link>
-                            <a
-                                href="#features"
-                                className="bg-zinc-900 text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-zinc-800 hover:border-emerald-500/50 hover:shadow-lg transition-all"
-                            >
-                                See How It Works
-                            </a>
-                        </div>
-                        <p className="mt-6 text-sm text-gray-500">
-                            No credit card required • Free 14-day trial • 5-minute setup
-                        </p>
+                            <span className="text-zinc-400">GPT-4o & Claude 3.5 support</span>
+                            <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:translate-x-0.5 transition-transform" />
+                        </a>
                     </div>
 
-                    {/* Demo Image/Video Placeholder */}
-                    <div className="mt-16 relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl blur-3xl opacity-20"></div>
-                        <div className="relative bg-zinc-900 rounded-2xl shadow-2xl p-4 border border-zinc-800">
-                            <div className="aspect-video bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-lg flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                                        <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                                        </svg>
+                    {/* Main headline */}
+                    <div className="text-center max-w-4xl mx-auto">
+                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
+                            Ship AI features
+                            <br />
+                            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                                10x faster
+                            </span>
+                        </h1>
+                        <p className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                            Embed is the fastest way to add an AI copilot to your product.
+                            Connect your APIs, customize the experience, and deploy in minutes—not months.
+                        </p>
+
+                        {/* CTA buttons */}
+                        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                            <Link href="/register" className="group inline-flex items-center justify-center gap-2 bg-white text-black px-6 py-3.5 rounded-lg text-base font-semibold hover:bg-zinc-200 transition-all">
+                                Start building free
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                            </Link>
+                            <a href="#demo" className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/10 px-6 py-3.5 rounded-lg text-base font-medium hover:bg-white/10 transition-all">
+                                <Play className="w-4 h-4" />
+                                Watch demo
+                            </a>
+                        </div>
+
+                        {/* Social proof */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-zinc-500">
+                            <div className="flex items-center gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                                ))}
+                            </div>
+                            <span className="hidden sm:block text-zinc-700">•</span>
+                            <span>Trusted by 500+ companies</span>
+                            <span className="hidden sm:block text-zinc-700">•</span>
+                            <span>10M+ conversations handled</span>
+                        </div>
+                    </div>
+
+                    {/* Hero visual */}
+                    <div className="mt-20 relative">
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0B] via-transparent to-transparent z-10 pointer-events-none" />
+                        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-1 overflow-hidden">
+                            <div className="rounded-xl bg-[#111113] p-6">
+                                {/* Code window header */}
+                                <div className="flex items-center gap-2 mb-6">
+                                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                                    <span className="ml-4 text-xs text-zinc-600 font-mono">embed.js</span>
+                                </div>
+
+                                {/* Code snippet */}
+                                <div className="font-mono text-sm space-y-1">
+                                    <div className="flex">
+                                        <span className="text-zinc-600 w-8">1</span>
+                                        <span>
+                                            <span className="text-pink-400">import</span>{' '}
+                                            <span className="text-cyan-400">{'{ Embed }'}</span>{' '}
+                                            <span className="text-pink-400">from</span>{' '}
+                                            <span className="text-emerald-400">'@embed/widget'</span>
+                                        </span>
                                     </div>
-                                    <p className="text-gray-500 text-lg">Interactive Chat Widget Demo</p>
+                                    <div className="flex">
+                                        <span className="text-zinc-600 w-8">2</span>
+                                        <span></span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-zinc-600 w-8">3</span>
+                                        <span>
+                                            <span className="text-cyan-400">Embed</span>
+                                            <span className="text-white">.</span>
+                                            <span className="text-yellow-400">init</span>
+                                            <span className="text-white">({'{'}</span>
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-zinc-600 w-8">4</span>
+                                        <span className="pl-4">
+                                            <span className="text-zinc-500">apiKey:</span>{' '}
+                                            <span className="text-emerald-400">'your-api-key'</span>
+                                            <span className="text-white">,</span>
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-zinc-600 w-8">5</span>
+                                        <span className="pl-4">
+                                            <span className="text-zinc-500">theme:</span>{' '}
+                                            <span className="text-emerald-400">'dark'</span>
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-zinc-600 w-8">6</span>
+                                        <span>
+                                            <span className="text-white">{'}'});</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Floating chat widget mockup */}
+                                <div className="absolute bottom-8 right-8 w-80 bg-[#1a1a1c] rounded-2xl border border-white/10 shadow-2xl shadow-black/50 overflow-hidden hidden lg:block">
+                                    <div className="p-4 border-b border-white/5">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center">
+                                                <Sparkles className="w-5 h-5 text-black" />
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-sm">AI Assistant</div>
+                                                <div className="text-xs text-emerald-400">Online</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 space-y-3">
+                                        <div className="bg-white/5 rounded-lg p-3 text-sm text-zinc-300">
+                                            How can I check my order status?
+                                        </div>
+                                        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 text-sm text-emerald-100">
+                                            I found 2 recent orders. Your order #4523 shipped yesterday and arrives Friday! 📦
+                                        </div>
+                                    </div>
+                                    <div className="p-4 border-t border-white/5">
+                                        <div className="bg-white/5 rounded-lg px-4 py-2.5 text-sm text-zinc-500">
+                                            Ask anything...
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Logo cloud */}
+                    <div className="mt-24">
+                        <p className="text-center text-sm text-zinc-600 mb-8 uppercase tracking-wider">
+                            Powering the best product teams
+                        </p>
+                        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 opacity-50">
+                            {['Vercel', 'Stripe', 'Linear', 'Notion', 'Figma', 'Raycast'].map((company) => (
+                                <div key={company} className="text-xl font-semibold text-zinc-500 tracking-tight">
+                                    {company}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Features Section */}
-            <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-zinc-900">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-white mb-4">
-                            Everything you need to build AI experiences
+            <section id="features" className="py-32 px-6 relative">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-20">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-400 mb-6">
+                            <Zap className="w-3.5 h-3.5" />
+                            Features
+                        </div>
+                        <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+                            Everything you need to
+                            <br />
+                            build AI experiences
                         </h2>
-                        <p className="text-xl text-gray-400">
-                            Connect your APIs, customize the widget, and deploy in minutes
+                        <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+                            From API integration to analytics, Embed gives you the complete toolkit to ship production-ready AI features.
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {/* Feature 1 */}
-                        <div className="bg-zinc-800 rounded-2xl p-8 hover:shadow-xl hover:shadow-emerald-500/10 transition-all border border-zinc-700">
-                            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4">
-                                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
+                    {/* Feature grid */}
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[
+                            { icon: Code2, title: 'API-First Integration', description: 'Connect any REST API with OpenAPI spec support. Our AI understands your endpoints automatically.', gradient: 'from-emerald-500 to-cyan-500' },
+                            { icon: Cpu, title: 'Multi-Model Support', description: 'GPT-4o, Claude 3.5, Gemini Pro—use the best model for your use case, or let us choose.', gradient: 'from-violet-500 to-pink-500' },
+                            { icon: Lock, title: 'Enterprise Security', description: 'SOC 2 compliant, end-to-end encryption, and full data residency control.', gradient: 'from-orange-500 to-red-500' },
+                            { icon: BarChart3, title: 'Real-time Analytics', description: 'Track conversations, API usage, and user satisfaction with detailed dashboards.', gradient: 'from-blue-500 to-cyan-500' },
+                            { icon: Globe, title: '30+ Languages', description: 'Automatic language detection and response. Speak to users in their native language.', gradient: 'from-emerald-500 to-teal-500' },
+                            { icon: Rocket, title: 'One-Line Deploy', description: 'Copy. Paste. Done. Deploy to any website or app with a single script tag.', gradient: 'from-pink-500 to-rose-500' }
+                        ].map((feature, i) => (
+                            <div key={i} className="group relative bg-white/[0.02] border border-white/5 rounded-2xl p-8 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300">
+                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5`}>
+                                    <feature.icon className="w-6 h-6 text-white" />
+                                </div>
+                                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                                <p className="text-zinc-400 leading-relaxed">{feature.description}</p>
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Instant API Integration</h3>
-                            <p className="text-gray-400">
-                                Connect your REST APIs in seconds. Our AI automatically understands your endpoints and makes intelligent calls.
-                            </p>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* How it works */}
+            <section id="how-it-works" className="py-32 px-6 bg-white/[0.02]">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-20">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-400 mb-6">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            How it works
+                        </div>
+                        <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+                            Go live in 5 minutes
+                        </h2>
+                        <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+                            No complex setup. No infrastructure to manage. Just three simple steps.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8 relative">
+                        {/* Connecting line */}
+                        <div className="hidden md:block absolute top-16 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-emerald-500/50 via-cyan-500/50 to-emerald-500/50" />
+
+                        {[
+                            { step: '01', title: 'Connect APIs', description: 'Import your OpenAPI spec or manually define endpoints. We automatically generate AI-friendly schemas.', icon: Code2 },
+                            { step: '02', title: 'Customize', description: 'Match your brand with custom themes, personality settings, and response behavior.', icon: Sparkles },
+                            { step: '03', title: 'Deploy', description: 'Add one line of JavaScript to your site. Your AI copilot is live.', icon: Rocket }
+                        ].map((item, i) => (
+                            <div key={i} className="relative text-center">
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center mx-auto mb-6 relative z-10">
+                                    <item.icon className="w-6 h-6 text-white" />
+                                </div>
+                                <div className="text-sm font-mono text-emerald-400 mb-2">{item.step}</div>
+                                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
+                                <p className="text-zinc-400">{item.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Social proof / Testimonials */}
+            <section className="py-32 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+                            Loved by developers
+                        </h2>
+                        <p className="text-lg text-zinc-400">
+                            See what our users are saying about Embed
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {[
+                            { quote: "Embed saved us 3 months of development time. We went from idea to production in a week.", author: "Sarah Chen", role: "CTO, Acme Inc", avatar: "SC" },
+                            { quote: "The API integration is magical. It just works with our existing backend.", author: "Marcus Johnson", role: "Lead Engineer, StartupXYZ", avatar: "MJ" },
+                            { quote: "Our support ticket volume dropped 40% after implementing Embed. Users love it.", author: "Emma Williams", role: "Head of Product, TechCo", avatar: "EW" }
+                        ].map((testimonial, i) => (
+                            <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-8 hover:border-white/10 transition-all">
+                                <div className="flex gap-1 mb-4">
+                                    {[...Array(5)].map((_, j) => (
+                                        <Star key={j} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                                    ))}
+                                </div>
+                                <p className="text-zinc-300 mb-6 leading-relaxed">&ldquo;{testimonial.quote}&rdquo;</p>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-sm font-semibold">
+                                        {testimonial.avatar}
+                                    </div>
+                                    <div>
+                                        <div className="font-medium text-sm">{testimonial.author}</div>
+                                        <div className="text-zinc-500 text-sm">{testimonial.role}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Stats section */}
+            <section className="py-24 px-6 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                        {[
+                            { value: '10M+', label: 'Messages processed' },
+                            { value: '500+', label: 'Companies' },
+                            { value: '99.9%', label: 'Uptime' },
+                            { value: '<200ms', label: 'Avg response' }
+                        ].map((stat, i) => (
+                            <div key={i}>
+                                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent mb-2">
+                                    {stat.value}
+                                </div>
+                                <div className="text-zinc-500">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing section */}
+            <section id="pricing" className="py-32 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-400 mb-6">
+                            <TrendingUp className="w-3.5 h-3.5" />
+                            Pricing
+                        </div>
+                        <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+                            Simple, transparent pricing
+                        </h2>
+                        <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+                            Start free, scale as you grow. No hidden fees.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                        {/* Free tier */}
+                        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-8">
+                            <div className="text-sm text-zinc-400 mb-2">Starter</div>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-4xl font-bold">$0</span>
+                                <span className="text-zinc-500">/month</span>
+                            </div>
+                            <p className="text-zinc-400 text-sm mb-6">Perfect for side projects and experimentation.</p>
+                            <Link href="/register" className="block text-center w-full py-3 rounded-lg border border-white/10 text-sm font-medium hover:bg-white/5 transition-colors mb-6">
+                                Get started free
+                            </Link>
+                            <ul className="space-y-3">
+                                {['1,000 messages/month', '1 API integration', 'Community support', 'Basic analytics'].map((feature, i) => (
+                                    <li key={i} className="flex items-center gap-2 text-sm text-zinc-400">
+                                        <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                                        {feature}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
 
-                        {/* Feature 2 */}
-                        <div className="bg-zinc-800 rounded-2xl p-8 hover:shadow-xl hover:shadow-emerald-500/10 transition-all border border-zinc-700">
-                            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4">
-                                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                                </svg>
+                        {/* Pro tier - highlighted */}
+                        <div className="relative bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-2xl p-8">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-black text-xs font-semibold rounded-full">
+                                Most popular
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Fully Customizable</h3>
-                            <p className="text-gray-400">
-                                Match your brand perfectly. Customize colors, behavior, and personality to fit your product.
-                            </p>
+                            <div className="text-sm text-emerald-400 mb-2">Pro</div>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-4xl font-bold">$49</span>
+                                <span className="text-zinc-500">/month</span>
+                            </div>
+                            <p className="text-zinc-400 text-sm mb-6">For growing teams and production apps.</p>
+                            <Link href="/register" className="block text-center w-full py-3 rounded-lg bg-white text-black text-sm font-semibold hover:bg-zinc-200 transition-colors mb-6">
+                                Start free trial
+                            </Link>
+                            <ul className="space-y-3">
+                                {['50,000 messages/month', 'Unlimited API integrations', 'Priority support', 'Advanced analytics', 'Custom branding', 'Team collaboration'].map((feature, i) => (
+                                    <li key={i} className="flex items-center gap-2 text-sm text-zinc-300">
+                                        <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                                        {feature}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
 
-                        {/* Feature 3 */}
-                        <div className="bg-zinc-800 rounded-2xl p-8 hover:shadow-xl hover:shadow-emerald-500/10 transition-all border border-zinc-700">
-                            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4">
-                                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
+                        {/* Enterprise tier */}
+                        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-8">
+                            <div className="text-sm text-zinc-400 mb-2">Enterprise</div>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-4xl font-bold">Custom</span>
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Analytics & Insights</h3>
-                            <p className="text-gray-400">
-                                Track usage, conversations, and API calls. Understand how users interact with your AI copilot.
-                            </p>
+                            <p className="text-zinc-400 text-sm mb-6">For large organizations with custom needs.</p>
+                            <a href="#" className="block text-center w-full py-3 rounded-lg border border-white/10 text-sm font-medium hover:bg-white/5 transition-colors mb-6">
+                                Contact sales
+                            </a>
+                            <ul className="space-y-3">
+                                {['Unlimited messages', 'Dedicated support', 'Custom SLA', 'On-premise option', 'SOC 2 report', 'SSO / SAML'].map((feature, i) => (
+                                    <li key={i} className="flex items-center gap-2 text-sm text-zinc-400">
+                                        <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                                        {feature}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* How It Works */}
-            <section className="py-20 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-white mb-4">
-                            Deploy in 3 simple steps
-                        </h2>
-                        <p className="text-xl text-gray-400">
-                            From zero to AI-powered assistant in minutes
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                                1
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Connect Your APIs</h3>
-                            <p className="text-gray-400">
-                                Import your OpenAPI spec or add endpoints manually. We'll handle the rest.
-                            </p>
-                        </div>
-
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                                2
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Customize Widget</h3>
-                            <p className="text-gray-400">
-                                Configure colors, behavior, and AI personality to match your brand.
-                            </p>
-                        </div>
-
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                                3
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Embed & Launch</h3>
-                            <p className="text-gray-400">
-                                Copy a single line of code. Paste it in your app. You're live!
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-500 to-emerald-600">
+            {/* Final CTA */}
+            <section className="py-32 px-6">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-4xl font-bold text-white mb-6">
-                        Ready to transform your product?
-                    </h2>
-                    <p className="text-xl text-emerald-50 mb-8">
-                        Join hundreds of developers building the next generation of AI-powered software
-                    </p>
-                    <Link
-                        href="/register"
-                        className="inline-block bg-white text-emerald-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl hover:scale-105 transition-all"
-                    >
-                        Start Building For Free
-                    </Link>
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-emerald-500/20 blur-3xl rounded-full" />
+                        <div className="relative bg-gradient-to-b from-white/5 to-transparent border border-white/10 rounded-3xl p-12 sm:p-16">
+                            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+                                Ready to ship AI?
+                            </h2>
+                            <p className="text-lg text-zinc-400 mb-10 max-w-xl mx-auto">
+                                Join hundreds of teams building the future of software with Embed. Start free today.
+                            </p>
+                            <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                <Link href="/register" className="group inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-lg text-base font-semibold hover:bg-zinc-200 transition-all">
+                                    Start building free
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                                </Link>
+                                <a href="#" className="inline-flex items-center justify-center gap-2 border border-white/10 px-8 py-4 rounded-lg text-base font-medium hover:bg-white/5 transition-all">
+                                    Talk to sales
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="bg-zinc-950 text-gray-400 py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-900">
-                <div className="max-w-7xl mx-auto">
-                    <div className="grid md:grid-cols-4 gap-8">
-                        <div>
-                            <div className="flex items-center space-x-2 mb-4">
-                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg"></div>
-                                <span className="text-white font-bold text-lg">Embed</span>
-                            </div>
-                            <p className="text-sm">
-                                AI-powered chat widgets for modern software products.
+            <footer className="border-t border-white/5 py-16 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                        <div className="col-span-2">
+                            <Link href="/" className="flex items-center gap-2 mb-4">
+                                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                                    <Sparkles className="w-4 h-4 text-black" />
+                                </div>
+                                <span className="text-lg font-semibold tracking-tight">Embed</span>
+                            </Link>
+                            <p className="text-zinc-500 text-sm mb-4 max-w-xs">
+                                The fastest way to add AI copilot features to your product.
                             </p>
+                            <div className="flex gap-4">
+                                <a href="#" className="text-zinc-500 hover:text-white transition-colors">
+                                    <Twitter className="w-5 h-5" />
+                                </a>
+                                <a href="#" className="text-zinc-500 hover:text-white transition-colors">
+                                    <Github className="w-5 h-5" />
+                                </a>
+                            </div>
                         </div>
                         <div>
-                            <h4 className="text-white font-semibold mb-4">Product</h4>
-                            <ul className="space-y-2 text-sm">
-                                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                            <h4 className="font-semibold mb-4 text-sm">Product</h4>
+                            <ul className="space-y-3 text-sm text-zinc-500">
+                                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
+                                <li><a href="#" className="hover:text-white transition-colors">Changelog</a></li>
                             </ul>
                         </div>
                         <div>
-                            <h4 className="text-white font-semibold mb-4">Company</h4>
-                            <ul className="space-y-2 text-sm">
+                            <h4 className="font-semibold mb-4 text-sm">Company</h4>
+                            <ul className="space-y-3 text-sm text-zinc-500">
                                 <li><a href="#" className="hover:text-white transition-colors">About</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
                             </ul>
                         </div>
                         <div>
-                            <h4 className="text-white font-semibold mb-4">Legal</h4>
-                            <ul className="space-y-2 text-sm">
+                            <h4 className="font-semibold mb-4 text-sm">Legal</h4>
+                            <ul className="space-y-3 text-sm text-zinc-500">
                                 <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
+                                <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
                             </ul>
                         </div>
                     </div>
-                    <div className="border-t border-zinc-900 mt-12 pt-8 text-center text-sm">
-                        <p>&copy; 2026 Embed. All rights reserved.</p>
+                    <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-zinc-600">
+                        <p>© 2026 Embed. All rights reserved.</p>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            All systems operational
+                        </div>
                     </div>
                 </div>
             </footer>

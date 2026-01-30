@@ -5,7 +5,7 @@ import { useAuthStore } from '@/lib/store';
 import type { User } from '@/lib/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
@@ -17,7 +17,7 @@ interface LoginForm {
 
 export default function LoginPage() {
     const router = useRouter();
-    const { setAuth } = useAuthStore();
+    const { setAuth, checkAuth, isAuthenticated, isLoading: authLoading } = useAuthStore();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -25,6 +25,29 @@ export default function LoginPage() {
         handleSubmit,
         formState: { errors },
     } = useForm<LoginForm>();
+
+    useEffect(() => {
+        const init = async () => {
+            const authenticated = await checkAuth();
+            if (authenticated) {
+                const currentTenant = useAuthStore.getState().tenant;
+                if (currentTenant) {
+                    router.push('/dashboard');
+                } else {
+                    router.push('/onboarding');
+                }
+            }
+        };
+        init();
+    }, [checkAuth, router]);
+
+    if (authLoading || isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+                <div className="animate-spin h-8 w-8 text-emerald-500" />
+            </div>
+        );
+    }
 
     const onSubmit = async (data: LoginForm) => {
         setIsLoading(true);

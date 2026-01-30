@@ -13,10 +13,12 @@ export default function SettingsPage() {
     const [isRegenerating, setIsRegenerating] = useState(false);
     const [showApiKey, setShowApiKey] = useState(false);
 
+    const [domainInput, setDomainInput] = useState('');
     const [settings, setSettings] = useState<Partial<TenantSettings>>({
         aiProvider: (tenant?.settings as TenantSettings)?.aiProvider || 'gemini',
         maxTokensPerMessage: (tenant?.settings as TenantSettings)?.maxTokensPerMessage || 2048,
         rateLimitPerMinute: (tenant?.settings as TenantSettings)?.rateLimitPerMinute || 60,
+        allowedDomains: (tenant?.settings as TenantSettings)?.allowedDomains || [],
         widgetTheme: (tenant?.settings as TenantSettings)?.widgetTheme || {
             primaryColor: '#0ea5e9',
             fontFamily: 'Inter',
@@ -27,6 +29,34 @@ export default function SettingsPage() {
             buttonIcon: 'chat',
         },
     });
+
+    const handleAddDomain = () => {
+        if (!domainInput.trim()) return;
+
+        let domain = domainInput.trim().toLowerCase();
+        // Remove http/https if present
+        domain = domain.replace(/^(https?:\/\/)/, '');
+        // Remove path if present
+        domain = domain.split('/')[0];
+
+        if (settings.allowedDomains?.includes(domain)) {
+            toast.error('Domain already added');
+            return;
+        }
+
+        setSettings({
+            ...settings,
+            allowedDomains: [...(settings.allowedDomains || []), domain],
+        });
+        setDomainInput('');
+    };
+
+    const handleRemoveDomain = (domain: string) => {
+        setSettings({
+            ...settings,
+            allowedDomains: settings.allowedDomains?.filter((d) => d !== domain),
+        });
+    };
 
     const handleSaveSettings = async () => {
         setIsLoading(true);
@@ -70,31 +100,32 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-8">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-                <p className="text-gray-500 mt-1">
-                    Configure your UseEmbed workspace and widget settings.
+                <h1 className="text-2xl font-bold text-white">Settings</h1>
+                <p className="text-gray-400 mt-1">
+                    Manage your workspace, security settings, and customize your AI assistant.
                 </p>
             </div>
 
             {/* API Key Section */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">API Key</h2>
-                <p className="text-sm text-gray-500 mb-4">
+            <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
+                <h2 className="text-lg font-semibold text-white mb-4">API Key</h2>
+                <p className="text-sm text-gray-400 mb-4">
                     Use this API key to authenticate your widget and API requests.
                 </p>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-gray-50 rounded-lg px-4 py-3 font-mono text-sm">
+                    <div className="flex-1 bg-zinc-800 rounded-lg px-4 py-3 font-mono text-sm text-emerald-400 border border-zinc-700">
                         {showApiKey ? tenant?.apiKey : '••••••••••••••••••••••••••••'}
                     </div>
                     <button
                         onClick={() => setShowApiKey(!showApiKey)}
-                        className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2.5 text-gray-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
                         title={showApiKey ? 'Hide' : 'Show'}
                     >
+                        {/* SVG icons remain same */}
                         {showApiKey ? (
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -108,7 +139,7 @@ export default function SettingsPage() {
                     </button>
                     <button
                         onClick={handleCopyApiKey}
-                        className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2.5 text-gray-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
                         title="Copy"
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -125,10 +156,10 @@ export default function SettingsPage() {
                 </div>
             </div>
 
-            {/* Widget Code Section */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Widget Installation</h2>
-                <p className="text-sm text-gray-500 mb-4">
+            {/* Widget Installation Section */}
+            <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
+                <h2 className="text-lg font-semibold text-white mb-4">Widget Installation</h2>
+                <p className="text-sm text-gray-400 mb-4">
                     Add this code snippet to your website to embed the AI chat widget.
                 </p>
 
@@ -149,62 +180,167 @@ export default function SettingsPage() {
                 </button>
             </div>
 
-            {/* AI Settings */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">AI Settings</h2>
+            {/* Domain Whitelisting Section */}
+            <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
+                <div className="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 className="text-lg font-semibold text-white">Domain Whitelisting</h2>
+                        <p className="text-sm text-gray-400">
+                            Restrict your API key to specific domains for enhanced security.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium border border-amber-100">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m12-3V7a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h4.5M12 15l-3-3m3 3l3-3" />
+                        </svg>
+                        Security Recommended
+                    </div>
+                </div>
 
                 <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">AI Provider</label>
-                        <select
-                            value={settings.aiProvider}
-                            onChange={(e) =>
-                                setSettings({ ...settings, aiProvider: e.target.value as 'gemini' | 'openai' })
-                            }
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            value={domainInput}
+                            onChange={(e) => setDomainInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddDomain()}
+                            placeholder="e.g. example.com or *.example.com"
+                            className="flex-1 px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                        />
+                        <button
+                            onClick={handleAddDomain}
+                            className="px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/10"
                         >
-                            <option value="gemini">Google Gemini (Default)</option>
-                            <option value="openai">OpenAI GPT</option>
-                        </select>
+                            Add
+                        </button>
+                    </div>
+
+                    {settings.allowedDomains && settings.allowedDomains.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                            {settings.allowedDomains.map((domain) => (
+                                <div
+                                    key={domain}
+                                    className="flex items-center gap-1.5 pl-3 pr-2 py-1.5 bg-zinc-800 text-gray-300 rounded-lg text-sm border border-zinc-700"
+                                >
+                                    <span>{domain}</span>
+                                    <button
+                                        onClick={() => handleRemoveDomain(domain)}
+                                        className="p-0.5 hover:bg-gray-200 rounded-md transition-colors text-gray-400 hover:text-gray-600"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                            <p className="text-sm text-blue-700">
+                                <strong>Tip:</strong> If no domains are added, your API key will work on any domain. Add your website domain (e.g., <code>company.com</code>) to restrict its usage.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* AI Settings Section */}
+            <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
+                <h2 className="text-lg font-semibold text-white mb-4">AI Settings</h2>
+
+                <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Agent Name</label>
+                            <input
+                                type="text"
+                                value={settings.agentName || ''}
+                                onChange={(e) => setSettings({ ...settings, agentName: e.target.value })}
+                                className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+                                placeholder="e.g. Support Bot"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">AI Provider</label>
+                            <select
+                                value={settings.aiProvider}
+                                onChange={(e) =>
+                                    setSettings({ ...settings, aiProvider: e.target.value as 'gemini' | 'openai' })
+                                }
+                                className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none appearance-none"
+                            >
+                                <option value="gemini">Google Gemini (Default)</option>
+                                <option value="openai">OpenAI GPT</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Max Tokens per Message
-                        </label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Initial Greeting</label>
                         <input
-                            type="number"
-                            value={settings.maxTokensPerMessage}
-                            onChange={(e) =>
-                                setSettings({ ...settings, maxTokensPerMessage: Number(e.target.value) })
-                            }
-                            min={100}
-                            max={8000}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                            type="text"
+                            value={settings.greeting || ''}
+                            onChange={(e) => setSettings({ ...settings, greeting: e.target.value })}
+                            className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+                            placeholder="e.g. Hello! How can I help you today?"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Rate Limit (requests/minute)
+                        <label className="block text-sm font-medium text-gray-400 mb-2">
+                            Knowledge Context
+                            <span className="ml-2 text-xs font-normal text-gray-500 italic">
+                                This background info helps the AI guide your users.
+                            </span>
                         </label>
-                        <input
-                            type="number"
-                            value={settings.rateLimitPerMinute}
-                            onChange={(e) =>
-                                setSettings({ ...settings, rateLimitPerMinute: Number(e.target.value) })
-                            }
-                            min={1}
-                            max={1000}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                        <textarea
+                            value={settings.systemContext || ''}
+                            onChange={(e) => setSettings({ ...settings, systemContext: e.target.value })}
+                            rows={5}
+                            className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none resize-none"
+                            placeholder="e.g. This is a SaaS website for managing project tasks. We offer three plans: Basic ($10), Pro ($25), and Enterprise..."
                         />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">
+                                Max Tokens per Message
+                            </label>
+                            <input
+                                type="number"
+                                value={settings.maxTokensPerMessage}
+                                onChange={(e) =>
+                                    setSettings({ ...settings, maxTokensPerMessage: Number(e.target.value) })
+                                }
+                                min={100}
+                                max={8000}
+                                className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">
+                                Rate Limit (requests/minute)
+                            </label>
+                            <input
+                                type="number"
+                                value={settings.rateLimitPerMinute}
+                                onChange={(e) =>
+                                    setSettings({ ...settings, rateLimitPerMinute: Number(e.target.value) })
+                                }
+                                min={1}
+                                max={1000}
+                                className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Widget Theme */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Widget Theme</h2>
+            <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
+                <h2 className="text-lg font-semibold text-white mb-4">Widget Theme</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -236,7 +372,7 @@ export default function SettingsPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Position</label>
                         <select
                             value={settings.widgetTheme?.position || 'bottom-right'}
                             onChange={(e) =>
@@ -248,7 +384,7 @@ export default function SettingsPage() {
                                     },
                                 })
                             }
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                            className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none appearance-none"
                         >
                             <option value="bottom-right">Bottom Right</option>
                             <option value="bottom-left">Bottom Left</option>
@@ -256,7 +392,7 @@ export default function SettingsPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Header Text</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Header Text</label>
                         <input
                             type="text"
                             value={settings.widgetTheme?.headerText || ''}
@@ -266,13 +402,13 @@ export default function SettingsPage() {
                                     widgetTheme: { ...settings.widgetTheme!, headerText: e.target.value },
                                 })
                             }
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                            className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
                             placeholder="How can I help you?"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-400 mb-1">
                             Input Placeholder
                         </label>
                         <input
@@ -284,13 +420,13 @@ export default function SettingsPage() {
                                     widgetTheme: { ...settings.widgetTheme!, placeholderText: e.target.value },
                                 })
                             }
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                            className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
                             placeholder="Type your message..."
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-400 mb-1">
                             Border Radius (px)
                         </label>
                         <input
@@ -304,7 +440,7 @@ export default function SettingsPage() {
                             }
                             min={0}
                             max={32}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                            className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
                         />
                     </div>
                 </div>

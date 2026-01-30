@@ -14,7 +14,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import { TrendingUp, MessageSquare, Zap, Users, Loader2, Server } from 'lucide-react';
+import { TrendingUp, MessageSquare, Zap, Users, Loader2, Server, Sparkles } from 'lucide-react';
 
 interface StatCardProps {
     title: string;
@@ -216,65 +216,115 @@ export default function DashboardPage() {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-500">Avg Response Time</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">
+                            <p className="text-sm text-gray-400">Avg Response Time</p>
+                            <p className="text-2xl font-bold text-white mt-1">
                                 {overview?.avgResponseTime?.toFixed(2) || '0.00'}s
                             </p>
                         </div>
-                        <div className="p-3 bg-green-50 text-green-600 rounded-lg">
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
+                        <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg">
+                            <TrendingUp className="w-6 h-6" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-500">Avg Messages/Conversation</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">
+                            <p className="text-sm text-gray-400">Avg Messages/Conversation</p>
+                            <p className="text-2xl font-bold text-white mt-1">
                                 {overview?.avgMessagesPerConversation?.toFixed(1) || '0.0'}
                             </p>
                         </div>
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                                />
-                            </svg>
+                        <div className="p-3 bg-blue-500/10 text-blue-400 rounded-lg">
+                            <MessageSquare className="w-6 h-6" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="bg-zinc-900 rounded-xl p-6 shadow-xl border border-zinc-800">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-500">AI Provider</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1 capitalize">
+                            <p className="text-sm text-gray-400">AI Provider</p>
+                            <p className="text-2xl font-bold text-white mt-1 capitalize">
                                 {(tenant?.settings as { aiProvider?: string })?.aiProvider || 'Gemini'}
                             </p>
                         </div>
-                        <div className="p-3 bg-purple-50 text-purple-600 rounded-lg">
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                />
-                            </svg>
+                        <div className="p-3 bg-purple-500/10 text-purple-400 rounded-lg">
+                            <Zap className="w-6 h-6" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Setup Guide */}
+            <div className="bg-zinc-900 rounded-xl p-8 shadow-xl border border-zinc-800 border-l-4 border-l-emerald-500">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
+                        <Zap className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">Get Started with the SDK</h2>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-white">1. Install</h3>
+                        <div className="relative group">
+                            <pre className="bg-black/50 rounded-lg p-4 font-mono text-sm text-emerald-400 overflow-x-auto border border-zinc-700">
+                                <code>npm install useembed-sdk</code>
+                            </pre>
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-white mt-6">2. Configure</h3>
+                        <p className="text-gray-400 text-sm">
+                            Add the widget to your React app for an instant AI assistant.
+                        </p>
+                        <div className="relative group">
+                            <pre className="bg-black/50 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto border border-zinc-700">
+                                <code>{`import { ChatWidget } from 'useembed-sdk/react';
+
+function App() {
+  return (
+    <ChatWidget 
+      apiKey="${tenant?.apiKey || 'YOUR_API_KEY'}"
+      agentName="${(tenant?.settings as any)?.agentName || 'AI Assistant'}"
+      greeting="${(tenant?.settings as any)?.greeting || 'Hello!'}"
+    />
+  );
+}`}</code>
+                            </pre>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-white">Vanilla JavaScript</h3>
+                        <p className="text-gray-400 text-sm">
+                            Use our client directly for custom integrations.
+                        </p>
+                        <div className="relative group">
+                            <pre className="bg-black/50 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto border border-zinc-700">
+                                <code>{`import { createClient } from 'useembed-sdk';
+
+const client = createClient({
+  apiKey: '${tenant?.apiKey || 'YOUR_API_KEY'}',
+});
+
+await client.init();
+const response = await client.sendMessage('Hello!');`}</code>
+                            </pre>
+                        </div>
+
+                        <div className="bg-emerald-500/5 rounded-xl p-6 border border-emerald-500/20 mt-6">
+                            <h4 className="text-emerald-400 font-semibold mb-2 flex items-center gap-2">
+                                <Sparkles className="w-4 h-4" />
+                                Pro Tip
+                            </h4>
+                            <p className="text-sm text-gray-400 leading-relaxed">
+                                Go to <strong>Settings</strong> to customize your agent&apos;s knowledge context.
+                                The more info you provide, the better it can help your users!
+                            </p>
                         </div>
                     </div>
                 </div>
