@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { authenticate, requireTenant, validate } from '../middleware/index';
 import { tenantService } from '../services/index';
+import { asyncHandler } from '../utils/async-handler';
 
 const router = Router();
 
@@ -18,6 +19,7 @@ const updateTenantSchema = z.object({
             maxTokensPerMessage: z.number().min(100).max(10000).optional(),
             maxMessagesPerConversation: z.number().min(10).max(1000).optional(),
             rateLimitPerMinute: z.number().min(1).max(1000).optional(),
+            allowedDomains: z.array(z.string()).optional(),
             widgetTheme: z
                 .object({
                     primaryColor: z.string().optional(),
@@ -34,44 +36,50 @@ const updateTenantSchema = z.object({
 });
 
 // Create tenant (requires authenticated user without tenant)
-router.post('/', authenticate, validate({ body: createTenantSchema }), async (req, res, next) => {
-    try {
+router.post(
+    '/',
+    authenticate,
+    validate({ body: createTenantSchema }),
+    asyncHandler(async (req, res) => {
         const { name } = req.body;
         const tenant = await tenantService.create(name, req.user!.userId);
         res.status(201).json(tenant);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Get current tenant
-router.get('/me', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.get(
+    '/me',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const tenant = await tenantService.getById(req.user!.tenantId!);
         res.json(tenant);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Update tenant
-router.patch('/me', authenticate, requireTenant, validate({ body: updateTenantSchema }), async (req, res, next) => {
-    try {
+router.patch(
+    '/me',
+    authenticate,
+    requireTenant,
+    validate({ body: updateTenantSchema }),
+    asyncHandler(async (req, res) => {
         const tenant = await tenantService.update(req.user!.tenantId!, req.body);
         res.json(tenant);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Regenerate API key
-router.post('/me/regenerate-key', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.post(
+    '/me/regenerate-key',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const result = await tenantService.regenerateApiKey(req.user!.tenantId!);
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 export default router;
+

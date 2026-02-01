@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { validate } from '../middleware/index';
 import { authService } from '../services/index';
 import { ERROR_CODES } from '../types/index';
+import { asyncHandler } from '../utils/async-handler';
 import { AppError } from '../utils/helpers';
 
 const router = Router();
@@ -23,41 +24,42 @@ const refreshSchema = z.object({
 });
 
 // Register
-router.post('/register', validate({ body: registerSchema }), async (req, res, next) => {
-    try {
+router.post(
+    '/register',
+    validate({ body: registerSchema }),
+    asyncHandler(async (req, res) => {
         const { email, password, name } = req.body;
         const result = await authService.register(email, password, name);
         res.status(201).json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Login
-router.post('/login', validate({ body: loginSchema }), async (req, res, next) => {
-    try {
+router.post(
+    '/login',
+    validate({ body: loginSchema }),
+    asyncHandler(async (req, res) => {
         const { email, password } = req.body;
         const result = await authService.login(email, password);
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Refresh token
-router.post('/refresh', validate({ body: refreshSchema }), async (req, res, next) => {
-    try {
+router.post(
+    '/refresh',
+    validate({ body: refreshSchema }),
+    asyncHandler(async (req, res) => {
         const { refreshToken } = req.body;
         const result = await authService.refreshToken(refreshToken);
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Get current user (protected)
-router.get('/me', async (req, res, next) => {
-    try {
+router.get(
+    '/me',
+    asyncHandler(async (req, res) => {
         const authHeader = req.headers.authorization;
         if (!authHeader?.startsWith('Bearer ')) {
             throw new AppError('Unauthorized', 401, ERROR_CODES.UNAUTHORIZED);
@@ -70,9 +72,8 @@ router.get('/me', async (req, res, next) => {
         const decoded = jwt.default.verify(token, config.JWT_SECRET) as { userId: string };
         const result = await authService.getMe(decoded.userId);
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 export default router;
+

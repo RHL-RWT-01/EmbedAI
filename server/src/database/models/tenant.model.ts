@@ -34,6 +34,11 @@ const tenantSettingsSchema = new Schema<TenantSettings>(
             default: () => ({ messagesPerMinute: 20, messagesPerDay: 1000 }),
         },
         allowedDomains: { type: [String], default: [] },
+        systemContext: { type: String, default: '' },
+        agentName: { type: String, default: 'AI Assistant' },
+        aiProvider: { type: String, enum: ['gemini', 'openai'], default: 'gemini' },
+        maxTokensPerMessage: { type: Number, default: 2048 },
+        rateLimitPerMinute: { type: Number, default: 60 },
     },
     { _id: false }
 );

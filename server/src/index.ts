@@ -16,6 +16,7 @@ import {
 } from './routes/index.js';
 import { setupSocketHandler } from './socket/index.js';
 import { logger } from './utils/logger.js';
+import { isRedisEnabled } from './utils/redis.js';
 
 async function bootstrap(): Promise<void> {
     // Create Express app
@@ -94,9 +95,10 @@ async function bootstrap(): Promise<void> {
 
     // Start server
     server.listen(config.PORT, () => {
-        logger.info(`🚀 UseEmbed Server running at http://localhost:${config.PORT}`);
-        logger.info(`📊 Environment: ${config.NODE_ENV}`);
-        logger.info(`🔌 WebSocket server ready`);
+        logger.info(`Embed Server running at http://localhost:${config.PORT}`);
+        logger.info(`Environment: ${config.NODE_ENV}`);
+        logger.info(`Redis: ${isRedisEnabled() ? 'enabled' : 'disabled (using in-memory rate limiting)'}`);
+        logger.info(`WebSocket server ready`);
     });
 
     // Graceful shutdown

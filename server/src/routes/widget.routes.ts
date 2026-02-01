@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { authenticateApiKey, chatLimiter, validate } from '../middleware/index';
 import { chatService, conversationService, tenantService } from '../services/index';
+import { asyncHandler } from '../utils/async-handler';
 
 const router = Router();
 
@@ -17,8 +18,11 @@ const initSchema = z.object({
 });
 
 // Initialize widget - returns tenant settings
-router.post('/init', authenticateApiKey, validate({ body: initSchema }), async (req, res, next) => {
-    try {
+router.post(
+    '/init',
+    authenticateApiKey,
+    validate({ body: initSchema }),
+    asyncHandler(async (req, res) => {
         const { sessionId } = req.body;
         const tenant = await tenantService.getById(req.tenant!.id);
 
@@ -39,14 +43,16 @@ router.post('/init', authenticateApiKey, validate({ body: initSchema }), async (
                 messages,
             },
         });
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Send chat message
-router.post('/message', authenticateApiKey, chatLimiter, validate({ body: chatMessageSchema }), async (req, res, next) => {
-    try {
+router.post(
+    '/message',
+    authenticateApiKey,
+    chatLimiter,
+    validate({ body: chatMessageSchema }),
+    asyncHandler(async (req, res) => {
         const { message, sessionId, conversationId, userId } = req.body;
 
         const result = await chatService.processMessage(message, {
@@ -57,14 +63,14 @@ router.post('/message', authenticateApiKey, chatLimiter, validate({ body: chatMe
         });
 
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Get conversation history
-router.get('/conversation/:conversationId', authenticateApiKey, async (req, res, next) => {
-    try {
+router.get(
+    '/conversation/:conversationId',
+    authenticateApiKey,
+    asyncHandler(async (req, res) => {
         const { conversationId } = req.params;
         const { page, limit } = req.query;
 
@@ -78,14 +84,13 @@ router.get('/conversation/:conversationId', authenticateApiKey, async (req, res,
             conversation,
             ...messages,
         });
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Health check for widget
-router.get('/health', async (req, res) => {
+router.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 export default router;
+

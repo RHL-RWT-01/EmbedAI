@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { apiService } from '../services/index';
 import { authenticate, requireTenant, validate } from '../middleware/index';
+import { apiService } from '../services/index';
+import { asyncHandler } from '../utils/async-handler';
 
 const router = Router();
 
@@ -48,8 +49,11 @@ const endpointSchema = z.object({
 });
 
 // List all APIs
-router.get('/', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.get(
+    '/',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const { page, limit, isActive } = req.query;
         const result = await apiService.getAll(req.user!.tenantId!, {
             page: page ? Number(page) : undefined,
@@ -57,64 +61,73 @@ router.get('/', authenticate, requireTenant, async (req, res, next) => {
             isActive: isActive ? isActive === 'true' : undefined,
         });
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Create API
-router.post('/', authenticate, requireTenant, validate(createApiSchema), async (req, res, next) => {
-    try {
+router.post(
+    '/',
+    authenticate,
+    requireTenant,
+    validate(createApiSchema),
+    asyncHandler(async (req, res) => {
         const api = await apiService.create(req.user!.tenantId!, req.body);
         res.status(201).json(api);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Get API by ID
-router.get('/:id', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.get(
+    '/:id',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const api = await apiService.getById(req.user!.tenantId!, req.params.id);
         res.json(api);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Update API
-router.patch('/:id', authenticate, requireTenant, validate(updateApiSchema), async (req, res, next) => {
-    try {
+router.patch(
+    '/:id',
+    authenticate,
+    requireTenant,
+    validate(updateApiSchema),
+    asyncHandler(async (req, res) => {
         const api = await apiService.update(req.user!.tenantId!, req.params.id, req.body);
         res.json(api);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Delete API
-router.delete('/:id', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.delete(
+    '/:id',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const result = await apiService.delete(req.user!.tenantId!, req.params.id);
         res.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Add endpoint to API
-router.post('/:id/endpoints', authenticate, requireTenant, validate(endpointSchema), async (req, res, next) => {
-    try {
+router.post(
+    '/:id/endpoints',
+    authenticate,
+    requireTenant,
+    validate(endpointSchema),
+    asyncHandler(async (req, res) => {
         const api = await apiService.addEndpoint(req.user!.tenantId!, req.params.id, req.body);
         res.status(201).json(api);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Update endpoint
-router.patch('/:id/endpoints/:endpointId', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.patch(
+    '/:id/endpoints/:endpointId',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const api = await apiService.updateEndpoint(
             req.user!.tenantId!,
             req.params.id,
@@ -122,23 +135,23 @@ router.patch('/:id/endpoints/:endpointId', authenticate, requireTenant, async (r
             req.body
         );
         res.json(api);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 // Delete endpoint
-router.delete('/:id/endpoints/:endpointId', authenticate, requireTenant, async (req, res, next) => {
-    try {
+router.delete(
+    '/:id/endpoints/:endpointId',
+    authenticate,
+    requireTenant,
+    asyncHandler(async (req, res) => {
         const api = await apiService.deleteEndpoint(
             req.user!.tenantId!,
             req.params.id,
             req.params.endpointId
         );
         res.json(api);
-    } catch (error) {
-        next(error);
-    }
-});
+    })
+);
 
 export default router;
+

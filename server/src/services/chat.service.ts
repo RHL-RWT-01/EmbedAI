@@ -45,11 +45,18 @@ export class ChatService {
         // Get available tools (APIs)
         const tools = await this.getAvailableTools(context.tenantId);
 
+        // Get tenant context for system prompt
+        const { TenantModel } = await import('../database/index');
+        const tenant = await TenantModel.findById(context.tenantId);
+        const systemPrompt = tenant?.settings?.systemContext
+            ? `Context about the website/business: ${tenant.settings.systemContext}\n\nYou are a helpful AI assistant for this website. Use the provided context to answer questions.`
+            : 'You are a helpful AI assistant.';
+
         // Build messages for AI
         const aiMessages = this.buildAIMessages(history);
 
         // Generate AI response
-        let result = await this.aiService.generate(aiMessages, { tools });
+        let result = await this.aiService.generate(aiMessages, { tools, systemPrompt });
 
         // Handle tool calls
         let toolResults: ToolResult[] = [];
@@ -70,7 +77,7 @@ export class ChatService {
             });
             aiMessages.push(toolMessage);
 
-            result = await this.aiService.generate(aiMessages, { tools });
+            result = await this.aiService.generate(aiMessages, { tools, systemPrompt });
         }
 
         // Save assistant message

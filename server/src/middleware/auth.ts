@@ -72,6 +72,40 @@ export async function authenticateApiKey(req: Request, _res: Response, next: Nex
             throw new AppError('Invalid API key', 401, ERROR_CODES.UNAUTHORIZED);
         }
 
+        // Domain Whitelisting Logic
+        const allowedDomains = tenant.settings?.allowedDomains || [];
+        if (allowedDomains.length > 0) {
+            const origin = req.headers.origin as string || req.headers.referer as string;
+
+            if (!origin) {
+                // If no origin/referer is provided, we might want to block or allow based on security posture.
+                // For a widget, there should always be an origin/referer in a browser.
+                throw new AppError('Secure requests must include an Origin or Referer header', 401, ERROR_CODES.UNAUTHORIZED);
+            }
+
+            try {
+                const originUrl = new URL(origin);
+                const hostname = originUrl.hostname;
+
+                const isAllowed = allowedDomains.some(domain => {
+                    // Exact match
+                    if (domain === hostname) return true;
+                    // Wildcard match (e.g., *.example.com)
+                    if (domain.startsWith('*.')) {
+                        const baseDomain = domain.slice(2);
+                        return hostname === baseDomain || hostname.endsWith('.' + baseDomain);
+                    }
+                    return false;
+                });
+
+                if (!isAllowed) {
+                    throw new AppError(`Domain ${hostname} is not authorized for this API key`, 401, ERROR_CODES.UNAUTHORIZED);
+                }
+            } catch (err) {
+                throw new AppError('Invalid Origin or Referer header', 401, ERROR_CODES.UNAUTHORIZED);
+            }
+        }
+
         req.tenant = {
             id: tenant._id.toString(),
             name: tenant.name,

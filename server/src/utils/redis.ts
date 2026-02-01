@@ -1,11 +1,20 @@
 import Redis from 'ioredis';
+import config from '../config/index.js';
 import { logger } from './logger.js';
 
 let redisClient: Redis | null = null;
 
-export function getRedisClient(): Redis {
+export function isRedisEnabled(): boolean {
+    return config.REDIS_ENABLE === 'true';
+}
+
+export function getRedisClient(): Redis | null {
+    if (!isRedisEnabled()) {
+        return null;
+    }
+
     if (!redisClient) {
-        const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+        const redisUrl = config.REDIS_URL;
 
         redisClient = new Redis(redisUrl, {
             maxRetriesPerRequest: 3,
@@ -46,6 +55,10 @@ export async function closeRedis(): Promise<void> {
 // Cache helpers
 export async function cacheGet<T>(key: string): Promise<T | null> {
     const redis = getRedisClient();
+    if (!redis) {
+        return null;
+    }
+
     const value = await redis.get(key);
     if (value) {
         try {
@@ -59,6 +72,10 @@ export async function cacheGet<T>(key: string): Promise<T | null> {
 
 export async function cacheSet(key: string, value: unknown, ttlSeconds?: number): Promise<void> {
     const redis = getRedisClient();
+    if (!redis) {
+        return;
+    }
+
     const serialized = typeof value === 'string' ? value : JSON.stringify(value);
     if (ttlSeconds) {
         await redis.setex(key, ttlSeconds, serialized);
@@ -69,15 +86,24 @@ export async function cacheSet(key: string, value: unknown, ttlSeconds?: number)
 
 export async function cacheDel(key: string): Promise<void> {
     const redis = getRedisClient();
+    if (!redis) {
+        return;
+    }
+
     await redis.del(key);
 }
 
 export async function cacheDelPattern(pattern: string): Promise<void> {
     const redis = getRedisClient();
+    if (!redis) {
+        return;
+    }
+
     const keys = await redis.keys(pattern);
     if (keys.length > 0) {
         await redis.del(...keys);
     }
 }
 
-export default { getRedisClient, closeRedis, cacheGet, cacheSet, cacheDel, cacheDelPattern };
+export default { getRedisClient, closeRedis, cacheGet, cacheSet, cacheDel, cacheDelPattern, isRedisEnabled };
+

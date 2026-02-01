@@ -11,6 +11,7 @@ const envSchema = z.object({
     MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
 
     // Redis
+    REDIS_ENABLE: z.enum(['true', 'false']).default('false'),
     REDIS_URL: z.string().default('redis://localhost:6379'),
 
     // JWT

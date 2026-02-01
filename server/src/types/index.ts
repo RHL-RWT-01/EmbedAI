@@ -54,6 +54,11 @@ export interface TenantSettings {
         messagesPerDay: number;
     };
     allowedDomains?: string[];
+    systemContext?: string;
+    agentName?: string;
+    aiProvider?: 'gemini' | 'openai';
+    maxTokensPerMessage?: number;
+    rateLimitPerMinute?: number;
 }
 
 // Widget types
